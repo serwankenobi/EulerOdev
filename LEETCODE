@@ -1,0 +1,130 @@
+
+
+
+LEETCODE  #16
+Normalde rakam soldan büyük olduğu zaman rakamları toplarız. Ama IV gibi şeyler buna geçerli değitir. Solda olduğu için 6 değil 4’ü gösterecektir. Bu durumda geri dönüp son basamağı kaldırmamız ve ikisini yeni basamak olarak birleştirmemiz gerekir. Bu yüzden son basamağı iki kez çıkarıyoruz.
+var romanToInt = function (s) {
+  const rdigit = {
+    I: 1,
+    V: 5,
+    X: 10,
+    L: 50,
+    C: 100,
+    D: 500,
+    M: 1000,
+  }
+
+  let result = 0
+  for (let i = 0, lastDigit = Infinity; i < s.length; i++) {
+    let digit = rdigit[s[i]]
+    result += digit <= lastDigit ? digit : digit - lastDigit * 2
+    lastDigit = digit
+  }
+  return result
+};
+
+
+______________________________________________________________________
+
+
+LEETCODE #33
+Açıkçası sorun ikili arama gerektirir.
+İkili aramanın ana fikri, ortadaki öğeyi seçmek ve daha sonra hangi yarıyı korumaya karar vermektir.
+Dizinin ön koşulu dizinin sıralanması gerektiğidir.
+Ancak daha yakından bakın ve iki yarıdan sadece birinin sıralanması gerektiğini anlıyoruz. Bu, hedefin bu yarıda olup olmadığını bilmemiz için yeterlidir. Değilse, o zaman diğerinde olmalıdır.
+Bir pivot seçtiğimizde, döndürülmüş dizinin iki sıralı kısmından birinde olması gerekir.
+Pivot sol kısımdaysa. Pivotun sol kısmının başlangıcının sıralandığını biliyoruz.
+Aksi takdirde pivot sağ kısımdadır. Pivotun sağ kısmının sonunun sıralandığını biliyoruz.  var search = function(nums, target) {
+  let s = 0
+  let e = nums.length - 1
+
+  while (s <= e) {
+    const p = (e + s) / 2 | 0
+    const pivot = nums[p]
+
+    if (pivot === target) {
+      return p
+    }
+
+    if (pivot < nums[e]) {
+      // right half is sorted
+      if (target > pivot  && target <= nums[e]) {
+        // target is inside the right half
+        s = p + 1
+      } else {
+        e = p - 1
+      }
+    } else {
+      // left half is sorted
+      if (target < pivot && target >= nums[s]) {
+        // target is inside the left half
+        e = p - 1
+      } else {
+        s = p + 1
+      }
+    }
+  }
+
+  return -1
+};
+
+
+______________________________________________________________________
+
+
+LEETCODE #03
+Bir dizi verildiğinde, tekrar etmeden en uzun alt dizeyi bulunuz.
+ var lengthOfLongestSubstring = function(s) {
+  const len = s.length
+  if (len <= 1) { return len }
+  
+  const indices = { [s[0]]: 0 }
+  let max = 1
+  let head = 0
+  let i = 0
+  while (++i < len) {
+    const last = indices[s[i]]
+    if (last >= head) {
+      max = Math.max(max, i - head)
+      head = last + 1
+    }
+    indices[s[i]] = i
+  }
+  
+  return Math.max(max, i - head)
+};
+
+
+________________________________________________________________________
+
+LEETCODE #123
+
+	var maxProfit = function(prices) {
+    // Calculate MaxProfit from 0 to x and MaxProfit from x + 1 to len - 1;
+    var profitFromZeroToX = [];
+    var profitFromXToEnd = [];
+    var min = prices[0];
+
+    // get max profit from 0 to x
+    for(var x = 1; x < prices.length; x++) {
+        var price = prices[x];
+        min = Math.min(price, min);
+        profitFromZeroToX[x] = Math.max(profitFromZeroToX[x - 1] || 0, price - min);
+    }
+    // get max profit from i + 1 to end
+    var max = prices[prices.length - 1];
+    for(x = prices.length - 2; x >= 0; x--) {
+        price = prices[x];
+        max = Math.max(price, max);
+        profitFromXToEnd[x] = Math.max(profitFromXToEnd[x + 1] || 0, max - price);
+    }
+    
+    var maxProfit = 0;
+    for(x = 0; x < prices.length; x++) {
+        var maxProfitSeperateAtX = (profitFromZeroToX[x] || 0) + (profitFromXToEnd[x] || 0);
+        maxProfit = Math.max(maxProfitSeperateAtX, maxProfit);
+    }
+    
+    return maxProfit;
+};
+
